@@ -14,11 +14,29 @@ functions:
           path: /users
           method: get
   createUser:
-    handler: src/serverless/functions/user/createUser.handler
+    handler: src/serverless/functions/user/registerUser.handler
     events:
       - httpApi:
           path: /users
           method: post
+  getUserById:
+    handler: src/serverless/functions/user/getUserById.handler
+    events:
+      - httpApi:
+          path: /users/{userId}
+          method: get
+  deleteUser:
+    handler: src/serverless/functions/user/deleteUser.handler
+    events:
+      - httpApi:
+          path: /users/{userId}
+          method: delete
+  updateUser:
+    handler: src/serverless/functions/user/updateUser.handler
+    events:
+      - httpApi:
+          path: /users/{userId}
+          method: put
 
 plugins:
   - serverless-offline
