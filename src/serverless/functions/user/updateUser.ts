@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { prismaClient } from "../../../common/database/prisma/prismaClient";
 import { UserMapper } from "../../../mappers/userMapper";
 import { z } from "zod";
+import { mergeBody } from "../../../common/utils/mergeBody";
 
 const requestBody = z.object({
     name: z.string().min(3, { message: 'Name must have at least 3 characters.' })
@@ -9,17 +10,11 @@ const requestBody = z.object({
     email: z.string().email({ message: 'Enter a valid email.' }),
 });
 
-const requestParams = z.object({
-    userId: z.string().uuid({ message: 'Enter a valid UUID' })
-});
-
-type UpdateUserSchema = z.infer<typeof requestBody>;
-type UpdateUserParams = z.infer<typeof requestParams>;
-
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     try {
-        const data = JSON.parse(event.body!) as UpdateUserSchema;
-        const { userId } = event.pathParameters as UpdateUserParams;
+        const { userId, ...data  } = mergeBody(event);
+
+        console.log(userId, data);
 
         requestBody.parse(data);
 
