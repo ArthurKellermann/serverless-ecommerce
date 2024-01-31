@@ -17,12 +17,14 @@ describe("Users - Integration", () => {
   });
 
   it("should get all users successfully", async () => {
-    const event = {};
-    
+    const event = {};    
     const response = await callLocalLambda('serverless-ecommerce-dev-getUsers', event);
+  
+    console.log('Response:', response);
   
     expect(response.statusCode).toBe(200);
     expect(JSON.parse(response.body)).toEqual(expect.arrayContaining([{ id: expect.anything() }]));
   });
+  
   
 });

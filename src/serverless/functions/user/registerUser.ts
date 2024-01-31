@@ -5,18 +5,25 @@ import { UserMapper } from "../../../mappers/userMapper";
 import { z } from "zod";
 
 const requestBody = z.object({
-    name: z.string().min(3, { message: 'Name must have at least 3 characters.' })
-        .transform(name => name.toLocaleUpperCase()),
-    email: z.string().email({ message: 'Enter a valid email.' }),
-    password: z.string().min(8, { message: 'Password must have at least 8 characters.' }).max(20, { message: 'Password must have at most 20 characters.' })
+    name: z.string(),
+    email: z.string().email(),
+    password: z.string().min(8).max(20)
 });
-
 
 type User = z.infer<typeof requestBody>;
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    let result = await registerUserLogic(event.body);
+
+    return {
+        statusCode: result.statusCode,
+        body: result.body,
+    };
+}
+
+const registerUserLogic = async (eventBody: string): Promise<APIGatewayProxyResult> => {
     try {
-        const { name, email, password } = JSON.parse(event.body!) as User;
+        const { name, email, password } = JSON.parse(eventBody!) as User;
         requestBody.parse({ name, email, password });
 
         const user = await prismaClient.user.create({
@@ -29,19 +36,14 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
         return {
             statusCode: 200,
-            body: JSON.stringify(UserMapper.toHttp(user))
+            body: JSON.stringify(UserMapper.toHttp(user)),
         };
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Invalid request.', details: error.errors }),
-            };
-        } else {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Invalid request.' }),
-            };
-        }
+
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ error: 'Invalid request.' }),
+        };
+
     }
 }

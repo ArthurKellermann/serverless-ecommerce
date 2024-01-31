@@ -5,14 +5,22 @@ import { z } from "zod";
 import { mergeBody } from "../../../common/utils/mergeBody";
 
 const requestBody = z.object({
-    name: z.string().min(3, { message: 'Name must have at least 3 characters.' })
-        .transform(name => name.toLocaleUpperCase()),
-    email: z.string().email({ message: 'Enter a valid email.' }),
+    name: z.string(),
+    email: z.string().email(),
 });
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    let result = await updateUserLogic(event);
+
+    return {
+        statusCode: result.statusCode,
+        body: result.body
+    };
+}
+
+const updateUserLogic = async (event: APIGatewayProxyEvent) => {
     try {
-        const { userId, ...data  } = mergeBody(event);
+        const { userId, ...data } = mergeBody(event);
 
         console.log(userId, data);
 
@@ -34,16 +42,10 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         };
 
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Invalid request.', details: error.errors }),
-            };
-        } else {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Invalid request.' }),
-            };
-        }
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ error: 'Invalid request.' }),
+        };
+
     }
 }

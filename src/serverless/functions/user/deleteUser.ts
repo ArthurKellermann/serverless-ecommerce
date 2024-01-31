@@ -4,13 +4,23 @@ import { prismaClient } from "../../../common/database/prisma/prismaClient";
 import { UserMapper } from "../../../mappers/userMapper";
 
 const requestParams = z.object({
-    userId: z.string().uuid({ message: 'Enter a valid UUID' })
+    userId: z.string().uuid()
 });
 
 type deleteUserSchema = z.infer<typeof requestParams>;
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const { userId } = event.pathParameters as deleteUserSchema;
+    let result = await deleteUserLogic(event.pathParameters as deleteUserSchema);
+
+    return {
+        statusCode: result.statusCode,
+        body: result.body
+    };
+
+}
+
+const deleteUserLogic = async (eventPathParameters: deleteUserSchema) => {
+    const { userId } = eventPathParameters;
 
     const user = await prismaClient.user.delete({
         where: {
@@ -20,7 +30,9 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     return {
         statusCode: 200,
-        body: JSON.stringify(UserMapper.toHttp(user))
-    }
+        body: JSON.stringify(UserMapper.toHttp(user)),
+    };
 
 }
+
+
