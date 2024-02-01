@@ -37,6 +37,36 @@ functions:
       - httpApi:
           path: /users/{userId}
           method: put
+  createOrder:
+    handler: src/serverless/functions/store/order/createOrder.handler
+    events:
+      - httpApi:
+          path: /orders
+          method: post
+  deleteOrder:
+    handler: src/serverless/functions/store/order/deleteOrder.handler
+    events:
+      - httpApi:
+          path: /orders
+          method: delete
+  getOrders:
+    handler: src/serverless/functions/store/order/getOrders.handler
+    events:
+      - httpApi:
+          path: /orders
+          method: get
+  getOrdersByUser:
+    handler: src/serverless/functions/store/order/getOrdersByUser.handler
+    events:
+      - httpApi:
+          path: /orders/{userId}
+          method: get
+  update:
+    handler: src/serverless/functions/store/order/updateOrder.handler
+    events:
+      - httpApi:
+          path: /orders
+          method: put
 
 plugins:
   - serverless-offline

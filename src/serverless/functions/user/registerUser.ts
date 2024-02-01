@@ -39,7 +39,6 @@ const registerUserLogic = async (eventBody: string): Promise<APIGatewayProxyResu
             body: JSON.stringify(UserMapper.toHttp(user)),
         };
     } catch (error) {
-
         return {
             statusCode: 400,
             body: JSON.stringify({ error: 'Invalid request.' }),
