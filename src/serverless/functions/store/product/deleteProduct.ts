@@ -3,13 +3,13 @@ import { z } from "zod";
 import { prismaClient } from '../../../../common/database/prisma/prismaClient';
 
 const requestParams = z.object({
-    orderId: z.string().uuid()
+    productId: z.string().uuid()
 });
 
-type deleteOrderSchema = z.infer<typeof requestParams>;
+type deleteProductSchema = z.infer<typeof requestParams>;
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    let result = await deleteOrderFunction(event.pathParameters as deleteOrderSchema);
+    let result = await deleteProductFunction(event.pathParameters as deleteProductSchema);
 
     return {
         statusCode: result.statusCode,
@@ -18,18 +18,18 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
 }
 
-const deleteOrderFunction = async (eventPathParameters: deleteOrderSchema) => {
-    const { orderId } = eventPathParameters;
+const deleteProductFunction = async (eventPathParameters: deleteProductSchema) => {
+    const { productId } = eventPathParameters;
 
-    const order = await prismaClient.order.delete({
+    const product = await prismaClient.product.delete({
         where: {
-            id: orderId
+            id: productId
         },
     })
 
     return {
         statusCode: 200,
-        body: JSON.stringify(order),
+        body: JSON.stringify(product),
     };
 
 }

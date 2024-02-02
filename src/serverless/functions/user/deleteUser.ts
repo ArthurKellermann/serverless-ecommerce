@@ -10,7 +10,7 @@ const requestParams = z.object({
 type deleteUserSchema = z.infer<typeof requestParams>;
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    let result = await deleteUserLogic(event.pathParameters as deleteUserSchema);
+    let result = await deleteUserFunction(event.pathParameters as deleteUserSchema);
 
     return {
         statusCode: result.statusCode,
@@ -19,7 +19,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
 }
 
-const deleteUserLogic = async (eventPathParameters: deleteUserSchema) => {
+const deleteUserFunction = async (eventPathParameters: deleteUserSchema) => {
     const { userId } = eventPathParameters;
 
     const user = await prismaClient.user.delete({

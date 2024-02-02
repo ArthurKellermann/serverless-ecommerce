@@ -11,7 +11,7 @@ const requestParams = z.object({
 type getUserByIdSchema = z.infer<typeof requestParams>;
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    let result = await getUserByIdLogic(event.pathParameters);
+    let result = await getUserByIdFunction(event.pathParameters);
 
     return {
         statusCode: result.statusCode,
@@ -19,7 +19,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     }
 }
 
-const getUserByIdLogic = async (eventPathParameters: getUserByIdSchema) => {
+const getUserByIdFunction = async (eventPathParameters: getUserByIdSchema) => {
     try {
         const { userId } = eventPathParameters;
 
@@ -40,7 +40,7 @@ const getUserByIdLogic = async (eventPathParameters: getUserByIdSchema) => {
     } catch (error) {
         return {
             statusCode: 400,
-            body: JSON.stringify({ error: 'Invalid request.' }),
+            body: JSON.stringify({ message: 'Invalid Request', error }),
         };
     }
 

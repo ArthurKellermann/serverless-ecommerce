@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { prismaClient } from '../../../../common/database/prisma/prismaClient';
-import { ZodError, z } from "zod";
+import { z } from "zod";
 import { mergeBody } from '../../../../common/utils/mergeBody';
 import { errorHandlingHelper } from "src/common/utils/errorHandlingHelper";
 
@@ -12,7 +12,7 @@ const requestBody = z.object({
 });
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    let result = await updateOrderFunction(event);
+    let result = await updateProductFunction(event);
 
     return {
         statusCode: result.statusCode,
@@ -20,25 +20,31 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     };
 }
 
-const updateOrderFunction = async (event: APIGatewayProxyEvent) => {
+const updateProductFunction = async (event: APIGatewayProxyEvent) => {
     try {
-        const { orderId, ...data } = mergeBody(event);
+        const { productId, ...data } = mergeBody(event);
 
         requestBody.parse(data);
 
-        const order = await prismaClient.order.update({
-            data,
+        const product = await prismaClient.product.update({
+            data: {
+                name: data.name,
+                price: data.price,
+                description: data.description,
+                stockQuantity: data.stockQuantity
+            },
             where: {
-                id: orderId
+                id: productId
             }
         });
 
         return {
             statusCode: 200,
-            body: JSON.stringify(order)
+            body: JSON.stringify(product)
         };
 
     } catch (error) {
         return errorHandlingHelper(error);
+
     }
 }

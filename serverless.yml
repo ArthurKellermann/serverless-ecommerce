@@ -47,7 +47,7 @@ functions:
     handler: src/serverless/functions/store/order/deleteOrder.handler
     events:
       - httpApi:
-          path: /orders
+          path: /orders/{orderId}
           method: delete
   getOrders:
     handler: src/serverless/functions/store/order/getOrders.handler
@@ -61,11 +61,41 @@ functions:
       - httpApi:
           path: /orders/{userId}
           method: get
-  update:
+  updateOrder:
     handler: src/serverless/functions/store/order/updateOrder.handler
     events:
       - httpApi:
-          path: /orders
+          path: /orders/{orderId}
+          method: put
+  createProduct:
+    handler: src/serverless/functions/store/product/createProduct.handler
+    events:
+      - httpApi:
+          path: /products
+          method: post
+  deleteProduct:
+    handler: src/serverless/functions/store/product/deleteProduct.handler
+    events:
+      - httpApi:
+          path: /products/{productId}
+          method: delete
+  getProducts:
+    handler: src/serverless/functions/store/product/getProducts.handler
+    events:
+      - httpApi:
+          path: /products
+          method: get
+  getProductById:
+    handler: src/serverless/functions/store/product/getProductById.handler
+    events:
+      - httpApi:
+          path: /products/{productId}
+          method: get
+  updateProduct:
+    handler: src/serverless/functions/store/product/updateProduct.handler
+    events:
+      - httpApi:
+          path: /products/{productId}
           method: put
 
 plugins:

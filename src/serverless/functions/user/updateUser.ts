@@ -3,14 +3,15 @@ import { prismaClient } from "../../../common/database/prisma/prismaClient";
 import { UserMapper } from "../../../mappers/userMapper";
 import { z } from "zod";
 import { mergeBody } from "../../../common/utils/mergeBody";
+import { errorHandlingHelper } from "src/common/utils/errorHandlingHelper";
 
 const requestBody = z.object({
-    name: z.string(),
+    name: z.string().optional(),
     email: z.string().email(),
 });
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    let result = await updateUserLogic(event);
+    let result = await updateUserFunction(event);
 
     return {
         statusCode: result.statusCode,
@@ -18,7 +19,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     };
 }
 
-const updateUserLogic = async (event: APIGatewayProxyEvent) => {
+const updateUserFunction = async (event: APIGatewayProxyEvent) => {
     try {
         const { userId, ...data } = mergeBody(event);
 
@@ -42,10 +43,7 @@ const updateUserLogic = async (event: APIGatewayProxyEvent) => {
         };
 
     } catch (error) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: 'Invalid request.' }),
-        };
+        return errorHandlingHelper(error);
 
     }
 }

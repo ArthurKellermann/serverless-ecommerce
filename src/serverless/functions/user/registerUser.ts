@@ -3,6 +3,7 @@ import { prismaClient } from "../../../common/database/prisma/prismaClient";
 import { hashSync } from 'bcryptjs';
 import { UserMapper } from "../../../mappers/userMapper";
 import { z } from "zod";
+import { errorHandlingHelper } from "src/common/utils/errorHandlingHelper";
 
 const requestBody = z.object({
     name: z.string(),
@@ -13,7 +14,7 @@ const requestBody = z.object({
 type User = z.infer<typeof requestBody>;
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    let result = await registerUserLogic(event.body);
+    let result = await registerUserFunction(event.body);
 
     return {
         statusCode: result.statusCode,
@@ -21,7 +22,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     };
 }
 
-const registerUserLogic = async (eventBody: string): Promise<APIGatewayProxyResult> => {
+const registerUserFunction = async (eventBody: string): Promise<APIGatewayProxyResult> => {
     try {
         const { name, email, password } = JSON.parse(eventBody!) as User;
         requestBody.parse({ name, email, password });
@@ -39,10 +40,6 @@ const registerUserLogic = async (eventBody: string): Promise<APIGatewayProxyResu
             body: JSON.stringify(UserMapper.toHttp(user)),
         };
     } catch (error) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: 'Invalid request.' }),
-        };
-
+        return errorHandlingHelper(error);
     }
 }

@@ -3,7 +3,7 @@ import { prismaClient } from "../../../common/database/prisma/prismaClient";
 import { UserMapper } from "../../../mappers/userMapper";
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    let result = await getUsersLogic();
+    let result = await getUsersFunction();
 
     return {
         statusCode: result.statusCode,
@@ -11,7 +11,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     };
 }
 
-const getUsersLogic = async () => {
+const getUsersFunction = async () => {
     const user = await prismaClient.user.findMany();
 
     return {

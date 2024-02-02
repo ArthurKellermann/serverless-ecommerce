@@ -1,18 +1,19 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { prismaClient } from '../../../../common/database/prisma/prismaClient';
 import { z } from "zod";
+import { errorHandlingHelper } from "src/common/utils/errorHandlingHelper"
 
 const requestBody = z.object({
     quantity: z.number(),
-    status: z.string(),
-    userId: z.string().uuid(),
-    productId: z.string().uuid()
+    status: z.string().optional(), // "Pending" set as default value
+    userId: z.string(),
+    productId: z.string()
 });
 
 type Order = z.infer<typeof requestBody>;
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    let result = await createOrderLogic(event.body);
+    let result = await createOrderFunction(event.body);
 
     return {
         statusCode: result.statusCode,
@@ -20,7 +21,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     };
 }
 
-const createOrderLogic = async (eventBody: string): Promise<APIGatewayProxyResult> => {
+const createOrderFunction = async (eventBody: string): Promise<APIGatewayProxyResult> => {
     try {
         const { quantity, status, userId, productId } = JSON.parse(eventBody!) as Order;
 
@@ -37,10 +38,7 @@ const createOrderLogic = async (eventBody: string): Promise<APIGatewayProxyResul
             body: JSON.stringify(order),
         };
     } catch (error) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: 'Invalid request.' }),
-        };
+        return errorHandlingHelper(error);
 
     }
 }

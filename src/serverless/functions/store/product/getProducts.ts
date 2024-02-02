@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { prismaClient } from '../../../../common/database/prisma/prismaClient';
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    let result = await getOrdersFunction();
+    let result = await getProductsFunction();
 
     return {
         statusCode: result.statusCode,
@@ -10,11 +10,11 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     };
 }
 
-const getOrdersFunction = async () => {
-    const orders = await prismaClient.order.findMany();
+const getProductsFunction = async () => {
+    const products = await prismaClient.product.findMany();
 
     return {
         statusCode: 200,
-        body: JSON.stringify(orders)
+        body: JSON.stringify(products)
     };
 }
