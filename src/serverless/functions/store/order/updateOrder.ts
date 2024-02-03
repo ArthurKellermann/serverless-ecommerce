@@ -1,8 +1,8 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { prismaClient } from '../../../../common/database/prisma/prismaClient';
-import { ZodError, z } from "zod";
+import { z } from "zod";
 import { mergeBody } from '../../../../common/utils/mergeBody';
-import { errorHandlingHelper } from "src/common/utils/errorHandlingHelper";
+import { errorHandlingHelper } from '../../../../common/utils/errorHandlingHelper'
 
 const requestBody = z.object({
     quantity: z.number().optional(),

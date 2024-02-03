@@ -1,13 +1,13 @@
-import { User as PrismaUser } from "@prisma/client";
+import { User as PrismaUserEntity } from "@prisma/client";
 
-export interface UserHttp {
+export interface UserHttpInterface {
     id: string;
     name: string;
     email: string;
 }
 
 export class UserMapper {
-    static toHttp(user: PrismaUser): UserHttp {
+    static toHttp(user: PrismaUserEntity): UserHttpInterface {
         return {
             id: user.id!,
             name: user.name,
@@ -15,7 +15,7 @@ export class UserMapper {
         };
     }
 
-    static toHttpList(users: PrismaUser[]): UserHttp[] {
+    static toHttpList(users: PrismaUserEntity[]): UserHttpInterface[] {
         return users.map(user => this.toHttp(user));
     }
 }

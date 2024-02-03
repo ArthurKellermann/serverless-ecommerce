@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { z } from "zod";
 import { prismaClient } from '../../../../common/database/prisma/prismaClient'
 import { AppError } from '../../../../common/errors/appError';
-import { errorHandlingHelper } from "src/common/utils/errorHandlingHelper";
+import { errorHandlingHelper } from '../../../../common/utils/errorHandlingHelper'
 
 const requestParams = z.object({
     productId: z.string().uuid()

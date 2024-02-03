@@ -3,7 +3,7 @@ import { prismaClient } from "../../../common/database/prisma/prismaClient";
 import { UserMapper } from "../../../mappers/userMapper";
 import { z } from "zod";
 import { mergeBody } from "../../../common/utils/mergeBody";
-import { errorHandlingHelper } from "src/common/utils/errorHandlingHelper";
+import { errorHandlingHelper } from '../../../common/utils/errorHandlingHelper';
 
 const requestBody = z.object({
     name: z.string().optional(),

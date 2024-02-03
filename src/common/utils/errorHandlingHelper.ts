@@ -12,8 +12,7 @@ export const errorHandlingHelper = (error) => {
                         path: issue.path,
                         message: issue.message
                     }
-                })
-            }),
+                })}),
         };
     } else {
         return {
