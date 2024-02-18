@@ -13,35 +13,29 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 }
 
 const getOrdersFunction = async () => {
-    const orders = await prismaClient.order.findMany();
-
-    const ordersMapped = await ordersFilter(orders);
+    const orders = await prismaClient.order.findMany({
+        select: {
+            id: true,
+            quantity: true,
+            status: true,
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true
+                }
+            },
+            product: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            }
+        }
+    });
 
     return {
         statusCode: 200,
-        body: JSON.stringify(ordersMapped)
+        body: JSON.stringify(orders)
     }
 };
-
-
-const ordersFilter = async (orders: Order[]) => {
-    const ordersMapped = [];
-
-    for (const order of orders) {
-        const user = await prismaClient.user.findUnique({
-            where: {
-                id: order.userId
-            }
-        });
-
-        const product = await prismaClient.product.findUnique({
-            where: {
-                id: order.productId
-            }
-        });
-
-        ordersMapped.push(OrderMapper.toHttp(order, user, product));
-    }
-
-    return ordersMapped;
-}

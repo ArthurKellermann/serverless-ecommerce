@@ -5,7 +5,9 @@
   "main": "index.ts",
   "scripts": {
     "dev": "npx serverless offline",
-    "test": "jest"
+    "test": "jest",
+    "preDeploy": "npx prisma generate",
+    "deploy": "npx serverless deploy --verbose"
   },
   "author": "",
   "license": "ISC",
