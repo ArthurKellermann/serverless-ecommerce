@@ -24,7 +24,7 @@ const updateOrderFunction = async (event: APIGatewayProxyEvent) => {
     try {
         const { orderId, ...data } = mergeBody(event);
 
-        requestBody.parse(data);
+        const updateOrderData = requestBody.parse(data);
 
         const order = await prismaClient.order.update({
             data,
@@ -32,6 +32,27 @@ const updateOrderFunction = async (event: APIGatewayProxyEvent) => {
                 id: orderId
             }
         });
+
+        if (updateOrderData.status === 'Delivered') {
+            const product = await prismaClient.product.findUnique({
+                where: {
+                    id: order.productId
+                }
+            });
+            
+            if (product.stockQuantity >= order.quantity) {
+                await prismaClient.product.update({
+                    where: {
+                        id: order.productId
+                    },
+                    data: {
+                        stockQuantity: product.stockQuantity - order.quantity
+                    }
+                });
+            } else {
+                throw new Error('Insufficient stock quantity');
+            }
+        }
 
         return {
             statusCode: 200,

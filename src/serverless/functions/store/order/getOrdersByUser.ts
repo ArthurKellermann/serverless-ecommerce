@@ -25,6 +25,17 @@ const getOrdersByUserFunction = async (eventPathParameters: getUserByIdSchema) =
         const orders = await prismaClient.order.findMany({
             where: {
                 userId
+            },
+            select: {
+                id: true,
+                quantity: true,
+                status: true,
+                product: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
             }
         });
 

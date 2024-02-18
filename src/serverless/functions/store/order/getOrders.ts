@@ -1,7 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { prismaClient } from '../../../../common/database/prisma/prismaClient';
-import { OrderMapper } from '../../../../mappers/orderMapper';
-import { Order } from "@prisma/client";
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     let result = await getOrdersFunction();
